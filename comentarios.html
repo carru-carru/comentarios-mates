@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Comentarios</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; }
+    .comentario { border: 1px solid #ccc; padding: 10px; margin: 5px 0; }
+    .borrar { color: red; cursor: pointer; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h2>Dejá tu comentario</h2>
+  <form id="form">
+    <input type="text" id="nombre" placeholder="Tu nombre" required><br>
+    <input type="email" id="gmail" placeholder="Tu Gmail" required><br>
+    <textarea id="comentario" placeholder="Escribe tu comentario..." required></textarea><br>
+    <button type="submit">Publicar</button>
+  </form>
+
+  <h3>Comentarios</h3>
+  <div id="comentarios"></div>
+
+  <script>
+    const API_URL = "PEGÁ AQUÍ LA URL DEL WEB APP DE APPS SCRIPT";
+
+    async function cargarComentarios() {
+      const res = await fetch(API_URL + "?action=getComentarios");
+      const data = await res.json();
+      const div = document.getElementById("comentarios");
+      div.innerHTML = "";
+      data.forEach(c => {
+        const el = document.createElement("div");
+        el.className = "comentario";
+        el.innerHTML = `<b>${c.nombre}:</b> ${c.comentario}`;
+        // Botón borrar solo si coincide Gmail
+        if (c.gmail === localStorage.getItem("gmail") && c.comentario !== "Comentario eliminado.") {
+          const btn = document.createElement("span");
+          btn.className = "borrar";
+          btn.textContent = " (Borrar)";
+          btn.onclick = async () => {
+            await fetch(API_URL + "?action=borrarComentario", {
+              method: "POST",
+              body: JSON.stringify({ id: c.id, gmail: c.gmail })
+            });
+            cargarComentarios();
+          };
+          el.appendChild(btn);
+        }
+        div.appendChild(el);
+      });
+    }
+
+    document.getElementById("form").onsubmit = async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById("nombre").value;
+      const gmail = document.getElementById("gmail").value;
+      const comentario = document.getElementById("comentario").value;
+
+      localStorage.setItem("gmail", gmail); // Guardamos el Gmail del usuario
+
+      await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ nombre, gmail, comentario })
+      });
+
+      document.getElementById("form").reset();
+      cargarComentarios();
+    };
+
+    cargarComentarios();
+  </script>
+</body>
+</html>

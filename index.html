@@ -10,7 +10,7 @@
   </style>
 </head>
 <body>
-  <h2>Dej· tu comentario</h2>
+  <h2>Dej√° tu comentario</h2>
   <form id="form">
     <input type="text" id="nombre" placeholder="Tu nombre" required><br>
     <input type="email" id="gmail" placeholder="Tu Gmail" required><br>
@@ -22,7 +22,7 @@
   <div id="comentarios"></div>
 
   <script>
-    const API_URL = "PEG¡ AQUÕ LA URL DEL WEB APP DE APPS SCRIPT";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxdKYog4JJgh9Bqq34lvcUQEPCvlky4n6kATxCSkQKH5YJzyQ1HHapvOfoN3_DOOsOlrw/exec";
 
     async function cargarComentarios() {
       const res = await fetch(API_URL + "?action=getComentarios");
@@ -33,7 +33,7 @@
         const el = document.createElement("div");
         el.className = "comentario";
         el.innerHTML = `<b>${c.nombre}:</b> ${c.comentario}`;
-        // BotÛn borrar solo si coincide Gmail
+        // Bot√≥n borrar solo si coincide Gmail
         if (c.gmail === localStorage.getItem("gmail") && c.comentario !== "Comentario eliminado.") {
           const btn = document.createElement("span");
           btn.className = "borrar";
@@ -72,3 +72,4 @@
   </script>
 </body>
 </html>
+
